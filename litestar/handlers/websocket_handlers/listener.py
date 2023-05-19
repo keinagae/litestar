@@ -357,10 +357,15 @@ class WebsocketListener(ABC):
     """
     type_encoders: A mapping of types to callables that transform them into types supported for serialization.
     """
+    connection_lifespan: Callable[..., AbstractAsyncContextManager[Any]] | None = None
+    """
+    connection_lifespan : A context manger to for connection life span
+    """
 
     def __init__(self) -> None:
         self._handler = websocket_listener(
             dependencies=self.dependencies,
+            connection_lifespan=self.connection_lifespan,
             dto=self.dto,
             exception_handlers=self.exception_handlers,
             guards=self.guards,
